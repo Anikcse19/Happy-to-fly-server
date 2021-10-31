@@ -30,13 +30,42 @@ client.connect(err => {
         const result = await packagesCollection.find({ _id: ObjectId(req.params.id) }).toArray()
         res.send(result)
     })
+    // get only cuurent user orders 
 
-    // get my orders 
+    app.get("/myOrders/:email", (req, res) => {
+        console.log(req.params);
+        ordersCollection
+            .find({ email: req.params.email })
+            .toArray((err, results) => {
+                res.send(results);
+            });
+    });
+    // update data 
+    app.put('/update/:id', (req, res) => {
+        console.log(req.params.id)
+        console.log(req.body)
+        // const id = req.params.id;
+        // const updatedName = req.body;
+        // const filter = { _id: ObjectId(id) };
+
+        // ordersCollection
+        //     .updateOne(filter, {
+        //         $set: {
+        //             status: updatedName.status,
+        //         },
+        //     })
+        //     .then((result) => {
+        //         console.log(result);
+        //     });
+    })
+    // get my orders
     app.get('/orders', async (req, res) => {
-        const result = await ordersCollection.find({}).toArray()
-        res.send(result)
+        const results = await ordersCollection.find({}).toArray()
+        res.send(results)
 
     })
+
+
     // cancel order
     app.delete("/cancelOrder/:id", async (req, res) => {
         console.log(req.params.id);
@@ -52,6 +81,15 @@ client.connect(err => {
     app.post('/myorders/:id', (req, res) => {
         console.log(req.body)
         ordersCollection.insertOne(req.body).then((documents) => {
+            res.send(documents.insertedId);
+        });
+
+    })
+
+    // add manual package 
+    app.post('/homepackages', (req, res) => {
+        console.log(req.body)
+        packagesCollection.insertOne(req.body).then((documents) => {
             res.send(documents.insertedId);
         });
 
